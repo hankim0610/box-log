@@ -19,7 +19,15 @@ It also has:
 
 ## Run it
 
-Open `index.html` in a browser, or use the GitHub Pages link for this repo.
+Live at **https://hankim0610.github.io/box-log/** once GitHub Pages is on (Settings → Pages → main / root).
+
+### Install on iPhone
+
+1. Open the link above in **Safari**.
+2. Tap **Share** → **Add to Home Screen** → **Add**.
+3. Open Box Log from its home-screen icon. It runs full screen and works offline.
+
+On Android, open it in Chrome and choose **Install app** from the menu.
 
 ## Where data is saved
 
@@ -32,4 +40,4 @@ Anywhere else (GitHub Pages, a local file), records are saved in that browser's 
 - Training-day builder
 - Export to CSV
 - Cloud sync outside Claude
-- Native mobile app
+- Native App Store app (Capacitor wrapper)
