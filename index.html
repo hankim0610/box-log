@@ -74,6 +74,13 @@ h3{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mu
 .pr .name{font-size:.8rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pr .val{font:600 1.25rem var(--mono);font-variant-numeric:tabular-nums}
 .pr .meta{font-size:.75rem;color:var(--muted)}
+.pr-groups{display:flex;flex-direction:column}
+.pr-group{display:flex;flex-direction:column;gap:10px;padding-block:16px;border-top:1px solid var(--line)}
+.pr-group:first-child{border-top:0;padding-top:4px}
+.pr-group-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pr-group-head h3{color:var(--fg);font-size:.8rem}
+.pr-more{background:none;border:0;color:var(--muted);font:600 .8rem var(--body);cursor:pointer;padding:4px 6px;border-radius:4px}
+.pr-more:hover{color:var(--fg)}
 .c-red{--c:var(--red)}.c-blue{--c:var(--blue)}.c-yellow{--c:var(--yellow)}.c-green{--c:var(--green)}.c-white{--c:var(--fg)}
 .wod-desc{background:var(--sunk);border-radius:6px;padding:10px 12px;font-size:.9rem;display:flex;flex-direction:column;gap:2px}
 .wod-desc b{font-family:var(--display);font-size:1.15rem;text-transform:uppercase;letter-spacing:.03em}
@@ -174,7 +181,7 @@ svg.chart{width:100%;height:auto;display:block}
     <div id="ov-body" style="display:flex;flex-direction:column;gap:24px">
       <div style="display:flex;flex-direction:column;gap:10px">
         <div class="row-head"><h2>Personal records</h2><span class="hint" id="ex-note"></span></div>
-        <div class="prs" id="ov-prs"></div>
+        <div class="pr-groups" id="ov-prs"></div>
       </div>
       <div class="panel" style="display:flex;flex-direction:column;gap:12px">
         <div class="row-head"><h2>Progress</h2>
@@ -527,14 +534,19 @@ function render(){
   const has = entries.length > 0;
   $("ov-empty").hidden = has; $("ov-body").hidden = !has;
   $("ex-note").innerHTML = entries.some(e => e.example) ? `Showing example data. <button class="btn ghost small" id="clear-ex">Clear examples</button>` : "";
-  const ovCards = [
-    ...Object.entries(lift).map(([k,v]) => prCard("red", k, wTxt(v.e1), v.entry.reps === 1 ? `1RM · ${fmtDate(v.entry.date)}` : `est. from ${w(v.entry.weightKg)}×${v.entry.reps}`)),
-    ...Object.entries(run).map(([k,v]) => prCard("blue", k, fmtTime(v.seconds), `${fmtTime(v.seconds/(v.distanceM/1000))}/km · ${fmtDate(v.date)}`)),
-    ...Object.entries(hx).map(([k,v]) => prCard("yellow", `HYROX ${k}`, fmtTime(v.totalSec), esc(v.event || fmtDate(v.date)))),
-    ...Object.entries(wod).map(([k,v]) => prCard("green", k, wodScore(v), fmtDate(v.date))),
-    ...Object.entries(skill).map(([k,v]) => prCard("white", k, skillTxt(v.metric, v.value), fmtDate(v.date)))
-  ];
-  $("ov-prs").innerHTML = ovCards.join("") || `<span class="hint">No records yet.</span>`;
+  // Personal records, one section per record type, divided by a thin line
+  const runOrder = Object.fromEntries(DISTS.map(([l,m],i) => [l, m || 1e9 + i]));
+  const groups = [
+    ["Strength", "red", "strength", Object.entries(lift).map(([k,v]) => prCard("red", k, wTxt(v.e1), v.entry.reps === 1 ? `1RM · ${fmtDate(v.entry.date)}` : `est. from ${w(v.entry.weightKg)}×${v.entry.reps}`))],
+    ["WOD", "green", "wod", Object.entries(wod).map(([k,v]) => prCard("green", k, wodScore(v), fmtDate(v.date)))],
+    ["Run", "blue", "run", Object.entries(run).sort((a,b) => (runOrder[a[0]] ?? a[1].distanceM) - (runOrder[b[0]] ?? b[1].distanceM))
+      .map(([k,v]) => prCard("blue", k, fmtTime(v.seconds), `${fmtTime(v.seconds/(v.distanceM/1000))}/km · ${fmtDate(v.date)}`))],
+    ["HYROX", "yellow", "hyrox", Object.entries(hx).map(([k,v]) => prCard("yellow", k, fmtTime(v.totalSec), esc(v.event || fmtDate(v.date))))],
+    ["Skills", "white", "skills", Object.entries(skill).map(([k,v]) => prCard("white", k, skillTxt(v.metric, v.value), fmtDate(v.date)))]
+  ].filter(g => g[3].length);
+  $("ov-prs").innerHTML = groups.map(([label, c, tab, cards]) =>
+    `<div class="pr-group"><div class="pr-group-head"><span class="kind"><span class="dot d-${c}"></span><h3>${label}</h3></span><button class="pr-more" data-goto="${tab}">See all</button></div><div class="prs">${cards.join("")}</div></div>`
+  ).join("") || `<span class="hint">No records yet.</span>`;
   $("ov-recent").innerHTML = desc.slice(0,8).map(e => { const [lbl,c] = KIND[e.kind] || ["Entry","red"];
     return `<tr${trAttr(e)}><td class="num">${fmtDate(e.date)}</td><td><span class="kind"><span class="dot d-${c}"></span>${lbl}</span></td><td>${summary(e)}</td><td>${badges(e, prIds)}</td>${editCell(e.id)}</tr>`; }).join("");
   renderChartPicker(lift, run, hx, wod, skill);
@@ -895,6 +907,7 @@ document.addEventListener("click", async ev => {
   else if(t.dataset.delYes){ const id = t.dataset.delYes; confirmId = null;
     if(editing?.id === id) endEdit(true);
     try{ await store.remove(id); toast("Removed"); }catch(e){ toast("Couldn't remove that entry. Try again."); } render(); }
+  else if(t.dataset.goto){ showTab(t.dataset.goto); window.scrollTo(0, 0); }
   else if(t.id === "load-ex"){ await loadExamples(); }
   else if(t.id === "clear-ex"){ if(editing) endEdit(true); for(const e of entries.filter(x=>x.example)) { try{ await store.remove(e.id); }catch(_){} } toast("Examples cleared"); }
 });

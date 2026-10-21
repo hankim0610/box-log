@@ -1,5 +1,5 @@
 // Offline cache for Box Log. Bump VERSION whenever index.html changes so phones pick up the update.
-const VERSION = "box-log-v3";
+const VERSION = "box-log-v4";
 const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icons/apple-touch-icon.png", "./icons/icon-192.png", "./icons/icon-512.png"];
 
 self.addEventListener("install", e => {
