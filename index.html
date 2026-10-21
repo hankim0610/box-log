@@ -58,9 +58,66 @@ h1 span{color:var(--red)}
 .unit{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
 .unit button{border:0;background:var(--surface);color:var(--muted);font:600 .8rem var(--mono);padding:6px 12px;cursor:pointer}
 .unit button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
-nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;gap:4px;padding-block:8px;border-bottom:1px solid var(--line);overflow-x:auto}
-nav.tabs button{flex:0 0 auto;border:0;background:none;color:var(--muted);font:800 1.15rem var(--display);text-transform:uppercase;letter-spacing:.04em;padding:6px 12px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:8px}
+/* Tabs: a sticky strip on wide screens, a fixed bottom bar on phones */
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:var(--bg);display:flex;gap:4px;padding-block:8px;border-bottom:1px solid var(--line)}
+nav.tabs button{flex:0 0 auto;border:0;background:none;color:var(--muted);font:800 1.1rem var(--display);text-transform:uppercase;letter-spacing:.04em;padding:6px 12px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:8px;-webkit-tap-highlight-color:transparent}
+nav.tabs svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 nav.tabs button[aria-selected="true"]{color:var(--fg);background:var(--sunk)}
+nav.tabs button[aria-selected="true"] svg{color:var(--c)}
+.fab{position:fixed;z-index:16;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));border:0;border-radius:999px;background:var(--red);color:#fff;font:800 1.15rem var(--display);text-transform:uppercase;letter-spacing:.05em;padding:14px 20px;display:flex;align-items:center;gap:6px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.25);-webkit-tap-highlight-color:transparent}
+.fab svg{width:18px;height:18px;stroke:currentColor;stroke-width:3;stroke-linecap:round;fill:none}
+@media (max-width:720px){
+  .wrap{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+  nav.tabs{position:fixed;top:auto;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(6,1fr);gap:0;background:var(--surface);border-bottom:0;border-top:1px solid var(--line);padding-block:6px calc(6px + env(safe-area-inset-bottom,0px));padding-left:max(4px,env(safe-area-inset-left,0px));padding-right:max(4px,env(safe-area-inset-right,0px))}
+  nav.tabs button{flex-direction:column;gap:3px;padding:4px 0;font:600 .66rem var(--body);letter-spacing:.02em;text-transform:none;min-width:0}
+  nav.tabs button[aria-selected="true"]{background:none}
+  nav.tabs svg{width:23px;height:23px}
+  .fab{bottom:calc(78px + env(safe-area-inset-bottom,0px));width:56px;height:56px;padding:0;justify-content:center}
+  .fab span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .fab svg{width:24px;height:24px}
+  body.typing .fab{display:none}
+  header.top{flex-wrap:nowrap;align-items:center;padding-block:14px 10px}
+  header.top .sub,header.top .status{display:none}
+  h1{font-size:2.1rem}
+}
+/* Quick-log sheet */
+.sheet-bg{position:fixed;inset:0;z-index:30;background:rgba(10,12,15,.45);display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:520px;background:var(--surface);border-radius:16px 16px 0 0;padding-block:18px calc(18px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:8px}
+.sheet h2{margin-bottom:4px}
+.sheet-opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:10px;padding:12px 14px;cursor:pointer;font:600 1rem var(--body)}
+.sheet-opt small{display:block;font-weight:400;font-size:.8rem;color:var(--muted)}
+.sheet-opt .dot{width:12px;height:12px}
+.flash{animation:flash 1.2s ease-out}
+@keyframes flash{0%{box-shadow:0 0 0 3px var(--blue)}100%{box-shadow:0 0 0 0 transparent}}
+/* Record cards */
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px 10px 8px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.item:hover{border-color:var(--muted)}
+.item:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.item.editing{border-color:var(--blue);background:var(--blue-soft)}
+.item-date{display:flex;flex-direction:column;align-items:center;line-height:1.1;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.item-date b{font-size:1.15rem;font-weight:600}
+.item-date span{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.item-main{min-width:0;display:flex;flex-direction:column;gap:2px}
+.item-title{font-weight:600;display:flex;align-items:center;gap:6px;min-width:0}
+.item-title .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item-title .dot{flex:none}
+.item-sub{font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:5px;min-width:0}
+.item-sub .badge{flex:none}
+.item-sub .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item-val{text-align:right;display:flex;flex-direction:column;line-height:1.15}
+.item-val b{font:600 1.1rem var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.item-val span{font-size:.7rem;color:var(--muted)}
+.item-del{width:32px;height:32px;border:0;background:none;color:var(--muted);border-radius:6px;cursor:pointer;display:grid;place-items:center}
+.item-del:hover{color:var(--red);background:var(--sunk)}
+.item-del svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.item-confirm{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding-top:8px;border-top:1px solid var(--line);font-size:.88rem}
+.item-confirm div{display:flex;gap:6px}
+.list-empty{color:var(--muted);font-size:.9rem;padding:14px;border:1px dashed var(--line);border-radius:10px;text-align:center}
+/* Backup */
+.bk-row{display:flex;gap:8px;flex-wrap:wrap}
+.bk-state{font-size:.85rem;display:flex;align-items:center;gap:6px}
+.bk-state.warn{color:var(--yellow)}
 .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
 .d-red{background:var(--red)}.d-blue{background:var(--blue)}.d-yellow{background:var(--yellow)}.d-green{background:var(--green)}.d-white{background:var(--surface);box-shadow:inset 0 0 0 2px var(--fg)}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
@@ -69,7 +126,7 @@ h2{font-family:var(--display);font-weight:800;font-size:1.5rem;text-transform:up
 h3{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0;font-weight:600}
 .row-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px}
-.prs{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.prs{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
 .pr{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--c,var(--line));border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
 .pr .name{font-size:.8rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pr .val{font:600 1.25rem var(--mono);font-variant-numeric:tabular-nums}
@@ -119,6 +176,8 @@ tr.editing td,tr.editing:hover td{background:var(--blue-soft)}
 .panel.is-editing{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
 .edit-tag{display:inline-block;margin-left:8px;font:700 .65rem var(--body);letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:4px;background:var(--blue);color:#fff;vertical-align:middle}
 .form-btns{display:flex;gap:8px;flex-wrap:wrap}
+.del-btn{color:var(--red);margin-left:auto}
+.del-btn.armed{background:var(--red);color:#fff;border-color:var(--red)}
 .badge{display:inline-block;font:700 .65rem var(--body);letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:4px}
 .b-pr{background:var(--fg);color:var(--bg)}
 .b-ex{background:var(--sunk);color:var(--muted)}
@@ -138,7 +197,7 @@ svg.chart{width:100%;height:auto;display:block}
 .chart text{fill:var(--muted);font:500 11px var(--mono)}
 .status{font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:6px}
 .status .dot{width:7px;height:7px}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:6px;font-weight:600;font-size:.9rem;z-index:20}
+.toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(14px + env(safe-area-inset-top,0px));pointer-events:none;max-width:calc(100% - 32px);text-align:center;background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:6px;font-weight:600;font-size:.9rem;z-index:20}
 .hx-stations{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
 .hx-st{display:flex;justify-content:space-between;gap:8px;padding:8px 10px;background:var(--sunk);border-radius:6px;font-size:.85rem}
 .hx-st b{font-family:var(--mono);font-weight:600}
@@ -162,20 +221,20 @@ svg.chart{width:100%;height:auto;display:block}
     </div>
   </header>
 
-  <nav class="tabs" role="tablist">
-    <button role="tab" data-tab="overview" aria-selected="true">Overview</button>
-    <button role="tab" data-tab="strength" aria-selected="false"><span class="dot d-red"></span>Strength</button>
-    <button role="tab" data-tab="wod" aria-selected="false"><span class="dot d-green"></span>WOD</button>
-    <button role="tab" data-tab="run" aria-selected="false"><span class="dot d-blue"></span>Run</button>
-    <button role="tab" data-tab="hyrox" aria-selected="false"><span class="dot d-yellow"></span>HYROX</button>
-    <button role="tab" data-tab="skills" aria-selected="false"><span class="dot d-white"></span>Skills</button>
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button role="tab" data-tab="overview" aria-selected="true" style="--c:var(--fg)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20h-5v-6h-6v6H4z"/></svg><span>Home</span></button>
+    <button role="tab" data-tab="strength" aria-selected="false" style="--c:var(--red)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18M6 8v8M9 6v12M15 6v12M18 8v8"/></svg><span>Strength</span></button>
+    <button role="tab" data-tab="wod" aria-selected="false" style="--c:var(--green)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 2M10 2.5h4M12 2.5V6"/></svg><span>WOD</span></button>
+    <button role="tab" data-tab="run" aria-selected="false" style="--c:var(--blue)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20c5 0 4-7 9-7s4-7 5-7"/><circle cx="5" cy="20" r="1.5"/><circle cx="19" cy="6" r="1.5"/></svg><span>Run</span></button>
+    <button role="tab" data-tab="hyrox" aria-selected="false" style="--c:var(--yellow)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4M6 4h11l-2.5 4L17 12H6"/></svg><span>HYROX</span></button>
+    <button role="tab" data-tab="skills" aria-selected="false" style="--c:var(--fg)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="16" r="4"/><circle cx="16" cy="16" r="4"/><path d="M8 12V3M16 12V3"/></svg><span>Skills</span></button>
   </nav>
 
   <!-- OVERVIEW -->
   <section class="view" id="v-overview">
     <div id="ov-empty" hidden class="panel empty">
       <strong>No records yet</strong>
-      <span>Log a lift, a run or a HYROX race from the tabs above. Your personal records show up here.</span>
+      <span>Tap <b>+ Log</b> to record a lift, WOD, run, HYROX race or skill. Your personal records show up here.</span>
       <button class="btn ghost" id="load-ex">Load example data</button>
     </div>
     <div id="ov-body" style="display:flex;flex-direction:column;gap:24px">
@@ -191,8 +250,18 @@ svg.chart{width:100%;height:auto;display:block}
       </div>
       <div style="display:flex;flex-direction:column;gap:10px">
         <h2>Recent</h2>
-        <div class="panel tbl-wrap" style="padding:4px 8px"><table><thead><tr><th>Date</th><th>Type</th><th>Result</th><th></th><th></th></tr></thead><tbody id="ov-recent"></tbody></table></div>
+        <div class="list" id="ov-recent"></div>
       </div>
+    </div>
+    <div class="panel" id="backup" style="display:flex;flex-direction:column;gap:10px">
+      <div class="row-head"><h2>Backup</h2><span class="bk-state" id="bk-state"></span></div>
+      <p class="hint" style="margin:0" id="bk-why"></p>
+      <div class="bk-row">
+        <button class="btn" id="bk-export" type="button">Export backup</button>
+        <label class="btn ghost" for="bk-file" style="display:inline-flex;align-items:center">Import backup</label>
+        <input type="file" id="bk-file" accept=".json,application/json" hidden>
+      </div>
+      <div class="hint" id="bk-msg" role="status"></div>
     </div>
   </section>
 
@@ -223,8 +292,8 @@ svg.chart{width:100%;height:auto;display:block}
       <div class="hint" id="c-basis"></div>
       <div class="pct-grid" id="c-grid"></div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:10px"><div class="row-head"><h2>History</h2><span class="hint">Tap a record to edit it</span></div>
-      <div class="panel tbl-wrap" style="padding:4px 8px"><table><thead><tr><th>Date</th><th>Lift</th><th>Set</th><th>Est. 1RM</th><th></th><th></th></tr></thead><tbody id="s-hist"></tbody></table></div>
+    <div style="display:flex;flex-direction:column;gap:10px"><div class="row-head"><h2>History</h2><span class="hint">Tap a record to edit or delete it</span></div>
+      <div class="list" id="s-hist"></div>
     </div>
   </section>
 
@@ -251,8 +320,8 @@ svg.chart{width:100%;height:auto;display:block}
       <div class="err" id="w-err"></div>
     </div>
     <div style="display:flex;flex-direction:column;gap:10px"><h2>Benchmark bests</h2><div class="prs" id="w-prs"></div></div>
-    <div style="display:flex;flex-direction:column;gap:10px"><div class="row-head"><h2>History</h2><span class="hint">Tap a record to edit it</span></div>
-      <div class="panel tbl-wrap" style="padding:4px 8px"><table><thead><tr><th>Date</th><th>Workout</th><th>Score</th><th>Notes</th><th></th><th></th></tr></thead><tbody id="w-hist"></tbody></table></div>
+    <div style="display:flex;flex-direction:column;gap:10px"><div class="row-head"><h2>History</h2><span class="hint">Tap a record to edit or delete it</span></div>
+      <div class="list" id="w-hist"></div>
     </div>
   </section>
 
@@ -271,8 +340,8 @@ svg.chart{width:100%;height:auto;display:block}
       <div class="err" id="r-err"></div>
     </div>
     <div style="display:flex;flex-direction:column;gap:10px"><h2>Run PRs</h2><div class="prs" id="r-prs"></div></div>
-    <div style="display:flex;flex-direction:column;gap:10px"><div class="row-head"><h2>History</h2><span class="hint">Tap a record to edit it</span></div>
-      <div class="panel tbl-wrap" style="padding:4px 8px"><table><thead><tr><th>Date</th><th>Distance</th><th>Time</th><th>Pace /km</th><th></th><th></th></tr></thead><tbody id="r-hist"></tbody></table></div>
+    <div style="display:flex;flex-direction:column;gap:10px"><div class="row-head"><h2>History</h2><span class="hint">Tap a record to edit or delete it</span></div>
+      <div class="list" id="r-hist"></div>
     </div>
   </section>
 
@@ -297,8 +366,8 @@ svg.chart{width:100%;height:auto;display:block}
     </div>
     <div style="display:flex;flex-direction:column;gap:10px"><h2>Best finish by division</h2><div class="prs" id="h-prs"></div></div>
     <div style="display:flex;flex-direction:column;gap:10px"><h2>Best station splits</h2><div class="hx-stations" id="h-best"></div></div>
-    <div style="display:flex;flex-direction:column;gap:10px"><div class="row-head"><h2>Races</h2><span class="hint">Tap a race to edit it</span></div>
-      <div class="panel tbl-wrap" style="padding:4px 8px"><table><thead><tr><th>Date</th><th>Event</th><th>Division</th><th>Finish</th><th>Runs total</th><th></th><th></th></tr></thead><tbody id="h-hist"></tbody></table></div>
+    <div style="display:flex;flex-direction:column;gap:10px"><div class="row-head"><h2>Races</h2><span class="hint">Tap a race to edit or delete it</span></div>
+      <div class="list" id="h-hist"></div>
     </div>
   </section>
 
@@ -319,10 +388,22 @@ svg.chart{width:100%;height:auto;display:block}
       <div class="err" id="k-err"></div>
     </div>
     <div style="display:flex;flex-direction:column;gap:10px"><h2>Skill bests</h2><div class="prs" id="k-prs"></div></div>
-    <div style="display:flex;flex-direction:column;gap:10px"><div class="row-head"><h2>History</h2><span class="hint">Tap a record to edit it</span></div>
-      <div class="panel tbl-wrap" style="padding:4px 8px"><table><thead><tr><th>Date</th><th>Skill</th><th>Result</th><th></th><th></th></tr></thead><tbody id="k-hist"></tbody></table></div>
+    <div style="display:flex;flex-direction:column;gap:10px"><div class="row-head"><h2>History</h2><span class="hint">Tap a record to edit or delete it</span></div>
+      <div class="list" id="k-hist"></div>
     </div>
   </section>
+</div>
+<button class="fab" id="fab" type="button" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Log</span></button>
+<div class="sheet-bg" id="sheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-h">
+    <h2 id="sheet-h">What are you logging?</h2>
+    <button class="sheet-opt" data-quick="strength"><span class="dot d-red"></span><span>Lift<small>Weight × reps, any movement</small></span></button>
+    <button class="sheet-opt" data-quick="wod"><span class="dot d-green"></span><span>WOD<small>Girls, Heroes or your box's workout</small></span></button>
+    <button class="sheet-opt" data-quick="run"><span class="dot d-blue"></span><span>Run<small>Distance and time</small></span></button>
+    <button class="sheet-opt" data-quick="hyrox"><span class="dot d-yellow"></span><span>HYROX race<small>Finish time and splits</small></span></button>
+    <button class="sheet-opt" data-quick="skills"><span class="dot d-white"></span><span>Skill<small>Unbroken reps, distance or hold</small></span></button>
+    <button class="btn ghost" data-quick-close style="margin-top:4px">Cancel</button>
+  </div>
 </div>
 <div class="toast" id="toast" hidden></div>
 
@@ -432,6 +513,11 @@ const store = {
     if(this.mode === "cloud"){ await this.col.add(doc); }
     else { doc.id = "l" + Date.now() + Math.random().toString(36).slice(2,6); entries.push(doc); saveLocal(); render(); }
   },
+  async put(id, doc){
+    doc.createdAt = doc.createdAt || Date.now();
+    if(this.mode === "cloud"){ await (id ? this.col.doc(id).set(doc) : this.col.add(doc)); }
+    else { doc.id = id || "l" + Date.now() + Math.random().toString(36).slice(2,6); entries.push(doc); saveLocal(); }
+  },
   async update(id, doc){
     const orig = entries.find(e => e.id === id);
     doc.createdAt = orig?.createdAt || Date.now();
@@ -508,12 +594,33 @@ function computePRs(){
 
 /* ---------- rendering ---------- */
 let confirmId = null;
-function delCell(id){
-  if(confirmId === id) return `<td><span class="confirm"><button class="btn red small" data-del-yes="${esc(id)}">Delete</button><button class="btn ghost small" data-del-no>Keep</button></span></td>`;
-  return `<td><span class="acts"><button class="act-edit" data-edit-btn="${esc(id)}">Edit</button><button class="del" data-del="${esc(id)}" aria-label="Delete entry">Remove</button></span></td>`;
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const TRASH = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>`;
+function itemParts(e){
+  switch(e.kind){
+    case "strength": return { title: esc(e.lift), sub: `${w(e.weightKg)} ${unit} × ${e.reps}`, val: wTxt(e1rm(e.weightKg, e.reps)), vsub: e.reps === 1 ? "1RM" : "est. 1RM" };
+    case "wod": return { title: esc(e.wod), tag: `<span class="badge ${e.rx ? "b-rx" : "b-sc"}">${e.rx ? "Rx" : "Scaled"}</span>`, sub: esc(e.notes || ""), val: wodScore(e),
+      vsub: {time:"for time", amrap:"rounds + reps", reps:"total reps", rounds:"rounds"}[e.scoreType] || "" };
+    case "run": return { title: esc(e.distLabel), sub: `${fmtTime(e.seconds/(e.distanceM/1000))} /km`, val: fmtTime(e.seconds), vsub: "time" };
+    case "hyrox": { const rs = e.runs?.filter(v => v != null) || [];
+      return { title: esc(e.event || "HYROX race"), sub: esc(e.division) + (rs.length === 8 ? ` · runs ${fmtTime(rs.reduce((a,b) => a+b, 0))}` : ""), val: fmtTime(e.totalSec), vsub: "finish" }; }
+    case "skill": return { title: esc(e.skill), sub: "", val: skillTxt(e.metric, e.value), vsub: e.metric === "sec" ? "hold" : e.metric === "m" ? "distance" : "unbroken" };
+  }
+  return { title: "Record", sub: "", val: "", vsub: "" };
 }
-const editCell = id => `<td><span class="acts"><button class="act-edit" data-edit-btn="${esc(id)}">Edit</button></span></td>`;
-const badges = (e, prIds) => (prIds.has(e.id) ? `<span class="badge b-pr">PR</span> ` : "") + (e.example ? `<span class="badge b-ex">Example</span>` : "");
+function itemCard(e, marks, showKind){
+  const p = itemParts(e), [y, m, d] = e.date.split("-").map(Number);
+  const yr = y !== new Date().getFullYear() ? ` '${String(y).slice(2)}` : "";
+  const dot = showKind ? `<span class="dot d-${(KIND[e.kind] || ["","red"])[1]}"></span>` : "";
+  const tags = (p.tag || "") + (marks.firstIds?.has(e.id) ? `<span class="badge b-first">First</span>` : "") + badges(e, marks.prIds);
+  const sub = showKind ? [KIND[e.kind]?.[0], p.sub].filter(Boolean).join(" · ") : p.sub;
+  return `<div class="item${editing?.id === e.id ? " editing" : ""}" data-edit="${esc(e.id)}" tabindex="0" role="button" aria-label="Edit record">
+    <div class="item-date"><b>${d}</b><span>${MON[m-1]}${yr}</span></div>
+    <div class="item-main"><div class="item-title">${dot}<span class="t">${p.title}</span></div>${sub || tags ? `<div class="item-sub">${tags}${sub ? `<span class="t">${sub}</span>` : ""}</div>` : ""}</div>
+    <div class="item-val"><b>${p.val}</b><span>${p.vsub}</span></div></div>`;
+}
+const listOf = (items, marks, empty, showKind) => items.map(e => itemCard(e, marks, showKind)).join("") || `<div class="list-empty">${empty}</div>`;
+const badges = (e, prIds) => (prIds.has(e.id) ? `<span class="badge b-pr">PR</span>` : "") + (e.example ? `<span class="badge b-ex">Example</span>` : "");
 function prCard(color, name, val, meta){
   return `<div class="pr c-${color}"><span class="name" title="${esc(name)}">${esc(name)}</span><span class="val">${val}</span><span class="meta">${meta}</span></div>`;
 }
@@ -547,32 +654,29 @@ function render(){
   $("ov-prs").innerHTML = groups.map(([label, c, tab, cards]) =>
     `<div class="pr-group"><div class="pr-group-head"><span class="kind"><span class="dot d-${c}"></span><h3>${label}</h3></span><button class="pr-more" data-goto="${tab}">See all</button></div><div class="prs">${cards.join("")}</div></div>`
   ).join("") || `<span class="hint">No records yet.</span>`;
-  $("ov-recent").innerHTML = desc.slice(0,8).map(e => { const [lbl,c] = KIND[e.kind] || ["Entry","red"];
-    return `<tr${trAttr(e)}><td class="num">${fmtDate(e.date)}</td><td><span class="kind"><span class="dot d-${c}"></span>${lbl}</span></td><td>${summary(e)}</td><td>${badges(e, prIds)}</td>${editCell(e.id)}</tr>`; }).join("");
+  const marks = { prIds, firstIds };
+  $("ov-recent").innerHTML = listOf(desc.slice(0,8), marks, "Nothing logged yet.", true);
+  renderBackup();
   renderChartPicker(lift, run, hx, wod, skill);
   renderCalc(lift);
 
   // wod
   $("w-prs").innerHTML = Object.entries(wod).map(([k,v]) => prCard("green", k, wodScore(v), fmtDate(v.date))).join("") || `<span class="hint">Your best score on each workout appears here, Rx and scaled kept apart.</span>`;
-  $("w-hist").innerHTML = desc.filter(e => e.kind==="wod").map(e =>
-    `<tr${trAttr(e)}><td class="num">${fmtDate(e.date)}</td><td>${esc(e.wod)} <span class="badge ${e.rx?"b-rx":"b-sc"}">${e.rx?"Rx":"Scaled"}</span></td><td class="num">${wodScore(e)}</td><td style="white-space:normal;min-width:140px;color:var(--muted)">${esc(e.notes||"")}</td><td>${badges(e,prIds)}</td>${delCell(e.id)}</tr>`).join("") || `<tr><td colspan="6" class="hint">No WODs logged.</td></tr>`;
+  $("w-hist").innerHTML = listOf(desc.filter(e => e.kind==="wod"), marks, "No WODs logged yet.");
 
   // skills
   $("k-prs").innerHTML = Object.entries(skill).map(([k,v]) => prCard("white", k, skillTxt(v.metric, v.value), fmtDate(v.date))).join("") || `<span class="hint">Your best for each skill appears here.</span>`;
-  $("k-hist").innerHTML = desc.filter(e => e.kind==="skill").map(e =>
-    `<tr${trAttr(e)}><td class="num">${fmtDate(e.date)}</td><td>${esc(e.skill)}</td><td class="num">${skillTxt(e.metric, e.value)}</td><td>${firstIds.has(e.id) ? `<span class="badge b-first">First</span> ` : ""}${badges(e,prIds)}</td>${delCell(e.id)}</tr>`).join("") || `<tr><td colspan="5" class="hint">No skills logged.</td></tr>`;
+  $("k-hist").innerHTML = listOf(desc.filter(e => e.kind==="skill"), marks, "No skills logged yet.");
 
   // strength
   $("s-prs").innerHTML = Object.entries(lift).map(([k,v]) =>
     prCard("red", k, wTxt(v.e1), `${v.max1 ? `Heaviest single ${wTxt(v.max1.weightKg)}` : `est. from ${w(v.entry.weightKg)}×${v.entry.reps}`}`)).join("") || `<span class="hint">Your best lift for each movement appears here.</span>`;
-  $("s-hist").innerHTML = desc.filter(e => e.kind==="strength").map(e =>
-    `<tr${trAttr(e)}><td class="num">${fmtDate(e.date)}</td><td>${esc(e.lift)}</td><td class="num">${w(e.weightKg)} × ${e.reps}</td><td class="num">${wTxt(e1rm(e.weightKg,e.reps))}</td><td>${badges(e,prIds)}</td>${delCell(e.id)}</tr>`).join("") || `<tr><td colspan="6" class="hint">No lifts logged.</td></tr>`;
+  $("s-hist").innerHTML = listOf(desc.filter(e => e.kind==="strength"), marks, "No lifts logged yet.");
 
   // run
   $("r-prs").innerHTML = Object.entries(run).map(([k,v]) =>
     prCard("blue", k, fmtTime(v.seconds), `${fmtTime(v.seconds/(v.distanceM/1000))}/km · ${fmtDate(v.date)}`)).join("") || `<span class="hint">Your fastest time at each distance appears here.</span>`;
-  $("r-hist").innerHTML = desc.filter(e => e.kind==="run").map(e =>
-    `<tr${trAttr(e)}><td class="num">${fmtDate(e.date)}</td><td>${esc(e.distLabel)}</td><td class="num">${fmtTime(e.seconds)}</td><td class="num">${fmtTime(e.seconds/(e.distanceM/1000))}</td><td>${badges(e,prIds)}</td>${delCell(e.id)}</tr>`).join("") || `<tr><td colspan="6" class="hint">No runs logged.</td></tr>`;
+  $("r-hist").innerHTML = listOf(desc.filter(e => e.kind==="run"), marks, "No runs logged yet.");
 
   // hyrox
   $("h-prs").innerHTML = Object.entries(hx).map(([k,v]) =>
@@ -586,10 +690,7 @@ function render(){
     const best = rr.length ? Math.min(...rr.flat()) : null;
     return `<div class="hx-st"><span>Fastest 1 km run</span><b>${best!=null?fmtTime(best):"—"}</b></div>`;
   })();
-  $("h-hist").innerHTML = desc.filter(e => e.kind==="hyrox").map(e => {
-    const rs = e.runs?.filter(v=>v!=null) || [];
-    return `<tr${trAttr(e)}><td class="num">${fmtDate(e.date)}</td><td>${esc(e.event || "—")}</td><td>${esc(e.division)}</td><td class="num">${fmtTime(e.totalSec)}</td><td class="num">${rs.length===8 ? fmtTime(rs.reduce((a,b)=>a+b,0)) : "—"}</td><td>${badges(e,prIds)}</td>${delCell(e.id)}</tr>`;
-  }).join("") || `<tr><td colspan="7" class="hint">No races logged.</td></tr>`;
+  $("h-hist").innerHTML = listOf(desc.filter(e => e.kind==="hyrox"), marks, "No races logged yet.");
 }
 
 /* ---------- chart ---------- */
@@ -677,7 +778,6 @@ async function save(doc, errEl, form){
 /* ---------- edit mode ---------- */
 let editing = null;
 const EDIT = { strength:["f-strength","strength"], run:["f-run","run"], hyrox:["f-hyrox","hyrox"], wod:["f-wod","wod"], skill:["f-skill","skills"] };
-const trAttr = e => ` data-edit="${esc(e.id)}" tabindex="0" title="Edit this record"${editing?.id === e.id ? ' class="editing"' : ""}`;
 // add a Cancel button beside each form's submit button
 for(const [kind,[fid]] of Object.entries(EDIT)){
   const f = $(fid), sub = f.querySelector('button[type="submit"]');
@@ -686,6 +786,15 @@ for(const [kind,[fid]] of Object.entries(EDIT)){
   sub.replaceWith(wrap); wrap.appendChild(sub);
   const c = document.createElement("button"); c.type = "button"; c.className = "btn ghost"; c.textContent = "Cancel"; c.hidden = true;
   c.onclick = () => endEdit(true); wrap.appendChild(c);
+  const d = document.createElement("button"); d.type = "button"; d.className = "btn ghost del-btn"; d.textContent = "Delete"; d.hidden = true;
+  d.onclick = async () => {
+    if(!d.dataset.armed){ d.dataset.armed = "1"; d.textContent = "Tap again to delete"; d.classList.add("armed"); return; }
+    const id = editing?.id; if(!id) return;
+    endEdit(true);
+    try { await store.remove(id); toast("Deleted"); } catch(e){ toast("Couldn't delete that record. Try again."); }
+    render();
+  };
+  wrap.appendChild(d);
   const h = f.parentElement.querySelector("h2"); h.dataset.label = h.textContent;
 }
 function setVal(id, v){ $(id).value = v ?? ""; }
@@ -726,6 +835,7 @@ function startEdit(id){
   }
   const f = $(fid), panel = f.parentElement, sub = f.querySelector('button[type="submit"]');
   sub.textContent = "Update"; sub.nextElementSibling.hidden = false;
+  const delB = f.querySelector(".del-btn"); delB.hidden = false; delB.textContent = "Delete"; delete delB.dataset.armed; delB.classList.remove("armed");
   const h = panel.querySelector("h2"); h.innerHTML = `${esc(h.dataset.label.replace(/^Log an? /, "Edit "))}<span class="edit-tag">Editing</span>`;
   panel.classList.add("is-editing");
   panel.querySelector(".err").textContent = "";
@@ -743,6 +853,7 @@ function endEdit(clear){
   if(!editing) return;
   const kind = editing.kind, [fid] = EDIT[kind], f = $(fid), panel = f.parentElement, sub = f.querySelector('button[type="submit"]');
   sub.textContent = sub.dataset.label; sub.nextElementSibling.hidden = true;
+  f.querySelector(".del-btn").hidden = true;
   const h = panel.querySelector("h2"); h.textContent = h.dataset.label;
   panel.classList.remove("is-editing");
   if(clear) CLEAR[kind]();
@@ -902,7 +1013,7 @@ setUnit(unit);
 $("chart-pick").onchange = e => { chartKey = e.target.value; drawChart(); };
 document.addEventListener("click", async ev => {
   const t = ev.target;
-  if(t.dataset.del){ confirmId = t.dataset.del; render(); }
+  if(t.dataset.del){ confirmId = confirmId === t.dataset.del ? null : t.dataset.del; render(); }
   else if(t.hasAttribute?.("data-del-no")){ confirmId = null; render(); }
   else if(t.dataset.delYes){ const id = t.dataset.delYes; confirmId = null;
     if(editing?.id === id) endEdit(true);
@@ -911,21 +1022,121 @@ document.addEventListener("click", async ev => {
   else if(t.id === "load-ex"){ await loadExamples(); }
   else if(t.id === "clear-ex"){ if(editing) endEdit(true); for(const e of entries.filter(x=>x.example)) { try{ await store.remove(e.id); }catch(_){} } toast("Examples cleared"); }
 });
-// Row taps are wired on each table body directly: iOS Safari doesn't deliver taps on plain
-// table cells to a listener on the document, so a document-level handler never sees them.
+// Card taps are wired on each list directly: iOS Safari doesn't always deliver taps on
+// non-button elements to a listener on the document.
 ["ov-recent","s-hist","w-hist","r-hist","h-hist","k-hist"].forEach(id => {
   $(id).addEventListener("click", ev => {
     const btn = ev.target.closest("[data-edit-btn]");
     if(btn){ ev.stopPropagation(); startEdit(btn.dataset.editBtn); return; }
     if(ev.target.closest("button")) return;   // Remove / Delete / Keep handled below
-    const tr = ev.target.closest("tr[data-edit]");
-    if(tr) startEdit(tr.dataset.edit);
+    const card = ev.target.closest("[data-edit]");
+    if(card) startEdit(card.dataset.edit);
   });
 });
 document.addEventListener("keydown", ev => {
-  if(ev.key === "Enter" && ev.target.matches?.("tr[data-edit]")){ ev.preventDefault(); startEdit(ev.target.dataset.edit); }
-  if(ev.key === "Escape" && editing) endEdit(true);
+  if((ev.key === "Enter" || ev.key === " ") && ev.target.matches?.(".item[data-edit]")){ ev.preventDefault(); startEdit(ev.target.dataset.edit); }
+  if(ev.key === "Escape"){ if(!$("sheet").hidden) closeSheet(); else if(editing) endEdit(true); }
 });
+
+/* ---------- quick log ---------- */
+const QUICK_FORM = { strength:"f-strength", wod:"f-wod", run:"f-run", hyrox:"f-hyrox", skills:"f-skill" };
+function openSheet(){ $("sheet").hidden = false; $("sheet").querySelector(".sheet-opt").focus({preventScroll:true}); }
+function closeSheet(){ $("sheet").hidden = true; }
+$("fab").onclick = openSheet;
+// Hide the Log button while the keyboard is up so it doesn't cover the form
+document.addEventListener("focusin", ev => { if(ev.target.matches?.("input:not([type=file]),select,textarea")) document.body.classList.add("typing"); });
+document.addEventListener("focusout", () => setTimeout(() => { if(!document.activeElement?.matches?.("input,select,textarea")) document.body.classList.remove("typing"); }, 50));
+$("sheet").addEventListener("click", ev => {
+  if(ev.target === $("sheet") || ev.target.closest("[data-quick-close]")){ closeSheet(); return; }
+  const opt = ev.target.closest("[data-quick]"); if(!opt) return;
+  closeSheet();
+  if(editing) endEdit(true);
+  const tab = opt.dataset.quick; showTab(tab); window.scrollTo(0, 0);
+  const panel = $(QUICK_FORM[tab]).parentElement;
+  panel.classList.remove("flash"); void panel.offsetWidth; panel.classList.add("flash");
+});
+
+/* ---------- backup ---------- */
+// var, not let: render() runs before this part of the script during startup
+var lastBackup;
+function renderBackup(){
+  if(lastBackup === undefined){ try { lastBackup = localStorage.getItem("boxlog-last-backup"); } catch(e){ lastBackup = null; } }
+  const real = entries.filter(e => !e.example).length;
+  const el = $("bk-state");
+  const days = lastBackup ? Math.floor((Date.now() - Number(lastBackup)) / 864e5) : null;
+  const stale = real > 0 && (days === null || days >= 14);
+  el.className = "bk-state" + (stale ? " warn" : "");
+  el.textContent = days === null ? (real ? "Never backed up" : "") : days === 0 ? "Backed up today" : `Last backup ${days} day${days === 1 ? "" : "s"} ago`;
+  $("bk-why").textContent = store.mode === "cloud"
+    ? "Your records sync to your Claude account. Export a backup file to keep a copy, or to move your records into the Box Log phone app."
+    : "Records are saved on this device only. Export a backup to Files or iCloud Drive every week or two, so you can restore them on a new phone or after reinstalling.";
+}
+const KNOWN_FIELDS = ["kind","date","createdAt","example","lift","weightKg","reps","distLabel","distanceM","seconds","event","division","totalSec","runs","stations","wod","scoreType","rx","notes","rounds","rpr","skill","metric","value"];
+const num = v => typeof v === "number" && isFinite(v) && v >= 0;
+function cleanRecord(r){
+  if(!r || typeof r !== "object" || !KIND[r.kind] || !/^\d{4}-\d{2}-\d{2}$/.test(r.date || "")) return null;
+  const ok = {
+    strength: () => typeof r.lift === "string" && num(r.weightKg) && num(r.reps),
+    run: () => typeof r.distLabel === "string" && num(r.distanceM) && r.distanceM > 0 && num(r.seconds),
+    hyrox: () => typeof r.division === "string" && num(r.totalSec),
+    wod: () => typeof r.wod === "string" && ["time","amrap","reps","rounds"].includes(r.scoreType) &&
+      (r.scoreType === "time" ? num(r.seconds) : r.scoreType === "reps" ? num(r.reps) : num(r.rounds)),
+    skill: () => typeof r.skill === "string" && ["reps","m","sec"].includes(r.metric) && num(r.value)
+  }[r.kind]();
+  if(!ok) return null;
+  const out = {};
+  for(const k of KNOWN_FIELDS) if(r[k] !== undefined) out[k] = r[k];
+  if(r.kind === "wod" && r.scoreType === "amrap" && !num(out.reps)) out.reps = 0;
+  if(r.kind === "hyrox"){ for(const k of ["runs","stations"]) out[k] = Array.isArray(r[k]) ? r[k].slice(0,8).map(v => num(v) ? v : null) : Array(8).fill(null); }
+  return out;
+}
+// Two records are the same if every field apart from bookkeeping matches
+const sig = r => JSON.stringify(Object.keys(r).filter(k => !["id","createdAt","example"].includes(k)).sort().map(k => [k, r[k]]));
+$("bk-export").onclick = async () => {
+  const msg = $("bk-msg");
+  const records = entries.filter(e => !e.example).map(({id, ...rest}) => ({ id, ...rest }));
+  if(!records.length){ msg.textContent = "There's nothing to back up yet. Example data isn't included."; return; }
+  const data = JSON.stringify({ app: "box-log", version: 1, exportedAt: new Date().toISOString(), unit, records }, null, 1);
+  const filename = `box-log-backup-${today()}.json`;
+  let saved = false;
+  try {
+    const dl = window.claude?.use ? await window.claude.use("downloads") : null;
+    if(dl){ await dl.save({ filename, data }); saved = true; }
+  } catch(e){ if(e?.code === "declined"){ msg.textContent = "Export cancelled."; return; } }
+  if(!saved){
+    const file = new File([data], filename, { type: "application/json" });
+    try {
+      if(navigator.canShare?.({ files: [file] })){ await navigator.share({ files: [file], title: "Box Log backup" }); saved = true; }
+    } catch(e){ if(e?.name === "AbortError"){ msg.textContent = "Export cancelled."; return; } }
+    if(!saved){
+      const a = document.createElement("a"); a.href = URL.createObjectURL(file); a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); saved = true;
+    }
+  }
+  lastBackup = String(Date.now()); try { localStorage.setItem("boxlog-last-backup", lastBackup); } catch(e){}
+  msg.textContent = `Backup of ${records.length} record${records.length === 1 ? "" : "s"} exported. On iPhone, choose Save to Files to keep it in iCloud Drive.`;
+  renderBackup();
+};
+$("bk-file").onchange = async ev => {
+  const file = ev.target.files?.[0], msg = $("bk-msg"); ev.target.value = "";
+  if(!file) return;
+  if(store.mode === "pending"){ msg.textContent = "Still connecting to your saved records. Try again in a moment."; return; }
+  let parsed;
+  try { parsed = JSON.parse(await file.text()); } catch(e){ msg.textContent = "That file isn't a Box Log backup. Choose a file named like box-log-backup-2026-10-21.json."; return; }
+  const list = Array.isArray(parsed) ? parsed : parsed?.records;
+  if(!Array.isArray(list)){ msg.textContent = "That file isn't a Box Log backup. Choose a file named like box-log-backup-2026-10-21.json."; return; }
+  const have = new Set(entries.map(sig)), haveIds = new Set(entries.map(e => e.id));
+  let added = 0, dupes = 0, bad = 0;
+  msg.textContent = "Importing…";
+  for(const raw of list){
+    const r = cleanRecord(raw); if(!r){ bad++; continue; }
+    if(have.has(sig(r))){ dupes++; continue; }
+    const id = typeof raw.id === "string" && /^[A-Za-z0-9_-]{1,64}$/.test(raw.id) && !haveIds.has(raw.id) ? raw.id : null;
+    try { await store.put(id, r); have.add(sig(r)); added++; } catch(e){ bad++; }
+  }
+  msg.textContent = `Imported ${added} record${added === 1 ? "" : "s"}.` + (dupes ? ` Skipped ${dupes} already in your log.` : "") + (bad ? ` ${bad} couldn't be read.` : "");
+  render();
+};
 
 async function loadExamples(){
   if(store.mode === "pending") return;

@@ -15,7 +15,9 @@ It also has:
 - Personal records with PR badges
 - A progress chart for any lift, WOD, distance, division or skill
 - A percentage calculator (40–105% of your 1RM, rounded to loadable plates)
-- Tap any record to edit it
+- Tap any record to edit or delete it
+- Quick **+ Log** button and a bottom tab bar on phones
+- **Backup**: export all records to a file (Files / iCloud Drive) and import them on another device
 
 ## Run it
 
