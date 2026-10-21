@@ -231,7 +231,7 @@ svg.chart{width:100%;height:auto;display:block}
           <option value="time">For time</option><option value="amrap">Rounds + reps (AMRAP)</option><option value="reps">Total reps</option><option value="rounds">Rounds completed</option>
         </select></label>
         <label class="f">Version<select id="w-rx"><option value="rx">Rx</option><option value="scaled">Scaled</option></select></label>
-        <label class="f" id="w-time-wrap">Time<input id="w-time" class="mono" placeholder="4:52"></label>
+        <label class="f" id="w-time-wrap">Time<input id="w-time" class="mono tm" placeholder="4:52" inputmode="numeric" autocomplete="off"></label>
         <label class="f" id="w-rounds-wrap" hidden>Rounds<input id="w-rounds" class="mono" type="number" min="0" inputmode="numeric" placeholder="18"></label>
         <label class="f" id="w-reps-wrap" hidden>+ Reps<input id="w-reps" class="mono" type="number" min="0" inputmode="numeric" placeholder="7"></label>
         <label class="f" id="w-rpr-wrap" hidden>Reps per round<input id="w-rpr" class="mono" type="number" min="1" inputmode="numeric" placeholder="optional"></label>
@@ -255,11 +255,11 @@ svg.chart{width:100%;height:auto;display:block}
       <form class="log" id="f-run">
         <label class="f">Distance<select id="r-dist"></select></label>
         <label class="f" id="r-custom-wrap" hidden>Distance (km)<input id="r-custom" class="mono" type="number" step="0.01" min="0.1" inputmode="decimal" placeholder="8"></label>
-        <label class="f">Time<input id="r-time" class="mono" placeholder="22:45" inputmode="numeric"></label>
+        <label class="f">Time<input id="r-time" class="mono tm" placeholder="22:45" inputmode="numeric" autocomplete="off"></label>
         <label class="f">Date<input id="r-date" type="date"></label>
         <button class="btn" type="submit">Save run</button>
       </form>
-      <div class="hint">Time as mm:ss or h:mm:ss. Pace is worked out per km.</div>
+      <div class="hint">Type the digits only and the colons fill in: 2245 becomes 22:45, 10530 becomes 1:05:30. Pace is worked out per km.</div>
       <div class="err" id="r-err"></div>
     </div>
     <div style="display:flex;flex-direction:column;gap:10px"><h2>Run PRs</h2><div class="prs" id="r-prs"></div></div>
@@ -277,7 +277,7 @@ svg.chart{width:100%;height:auto;display:block}
         <label class="f">Division<select id="h-div">
           <option>Open</option><option>Pro</option><option>Doubles</option><option>Relay</option><option>Simulation</option>
         </select></label>
-        <label class="f">Finish time<input id="h-total" class="mono" placeholder="1:18:30"></label>
+        <label class="f">Finish time<input id="h-total" class="mono tm" placeholder="1:18:30" inputmode="numeric" autocomplete="off"></label>
         <label class="f">Date<input id="h-date" type="date"></label>
         <details class="splits">
           <summary>Add splits (optional)</summary>
@@ -392,6 +392,20 @@ function fmtTime(sec){
   const h = Math.floor(sec/3600), m = Math.floor(sec%3600/60), s = sec%60;
   return h ? `${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}` : `${m}:${String(s).padStart(2,"0")}`;
 }
+// Time boxes: the iPhone number pad has no ":" key, so colons are filled in from the right as digits are typed.
+// 245 -> 2:45, 2245 -> 22:45, 11830 -> 1:18:30
+function packTime(raw){
+  const d = raw.replace(/\D/g, "").slice(0, 6);
+  if(d.length <= 2) return d;
+  if(d.length <= 4) return d.slice(0, -2) + ":" + d.slice(-2);
+  return d.slice(0, -4) + ":" + d.slice(-4, -2) + ":" + d.slice(-2);
+}
+document.addEventListener("input", ev => {
+  const el = ev.target;
+  if(!el.classList?.contains("tm") || /[^\d:]/.test(el.value)) return;
+  const v = packTime(el.value);
+  if(v !== el.value) el.value = v;
+});
 const e1rm = (kg, reps) => reps <= 1 ? kg : kg * (1 + reps/30);
 const liftName = r => r.lift;
 const KIND = {strength:["Strength","red"], wod:["WOD","green"], run:["Run","blue"], hyrox:["HYROX","yellow"], skill:["Skill","white"]};
@@ -729,7 +743,7 @@ $("s-lift").onchange = () => $("s-custom-wrap").hidden = $("s-lift").value !== "
 $("r-dist").innerHTML = DISTS.map(([l])=>`<option ${l==="5 km"?"selected":""}>${l}</option>`).join("");
 $("r-dist").onchange = () => $("r-custom-wrap").hidden = $("r-dist").value !== "Other…";
 $("h-splits").innerHTML = STATIONS.map((s,i)=>
-  `<label class="f">Run ${i+1}<input class="mono" id="h-run${i}" placeholder="4:30"></label><label class="f">${s}<input class="mono" id="h-st${i}" placeholder="4:15"></label>`).join("");
+  `<label class="f">Run ${i+1}<input class="mono tm" id="h-run${i}" placeholder="4:30" inputmode="numeric" autocomplete="off"></label><label class="f">${s}<input class="mono tm" id="h-st${i}" placeholder="4:15" inputmode="numeric" autocomplete="off"></label>`).join("");
 ["s-date","r-date","h-date","w-date","k-date"].forEach(id => $(id).value = today());
 
 /* ---------- percentage calculator ---------- */
@@ -808,6 +822,8 @@ function syncSkillForm(){
   $("k-custom-wrap").hidden = $("k-metric-wrap").hidden = !other;
   $("k-val-lbl").textContent = m === "sec" ? "Hold time (mm:ss)" : m === "m" ? "Distance (m)" : "Max unbroken reps";
   $("k-val").placeholder = m === "sec" ? "0:45" : m === "m" ? "15" : "12";
+  $("k-val").classList.toggle("tm", m === "sec");
+  $("k-val").inputMode = m === "m" ? "decimal" : "numeric";
 }
 $("k-skill").onchange = syncSkillForm; $("k-metric").onchange = syncSkillForm; syncSkillForm();
 $("f-skill").onsubmit = ev => {
